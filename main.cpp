@@ -16,14 +16,14 @@ enum class TokenType {
 };
 
 // Function to find the index of an element in a vector
-//int findIndex(const std::vector<TokenType>& vec, const TokenType &target) {
-//    auto it = std::find_if(vec.begin(), vec.end(), [&target](const TokenType& token){ return token == target; });
-//    if (it != vec.end()) {
-//        return std::distance(vec.begin(), it); // Calculate index if found
-//    } else {
-//        return -1; // Return -1 if not found
-//    }
-//}
+int findIndex(const std::vector<TokenType>& vec, const TokenType &target) {
+    auto it = std::find_if(vec.begin(), vec.end(), [&target](const TokenType& token){ return token == target; });
+    if (it != vec.end()) {
+        return std::distance(vec.begin(), it); // Calculate index if found
+    } else {
+        return -1; // Return -1 if not found
+    }
+}
 
 //create a class called Tokenizer
 class Tokenizer {
@@ -98,81 +98,118 @@ public:
     }
 };
 
+bool is_valid_sentence(const Tokenizer& tokenizer, const std::string& sentence) {
+    auto tokens = tokenizer.tokenize(sentence);
+    if (std::find_if(tokens.begin(), tokens.end(), [](const TokenType& token){ return token == TokenType::Noun; }) == tokens.end() ||
+        std::find_if(tokens.begin(), tokens.end(), [](const TokenType& token){ return token == TokenType::Verb; }) == tokens.end()) {
+        return false;
+    }else if (std::find_if(tokens.begin(), tokens.end(), [](const TokenType& token){ return token == TokenType::Noun; }) != tokens.end()) {
+        int main_verb = findIndex(tokens, TokenType::Verb);
+        int object_index = findIndex(tokens, TokenType::Noun);
+        if (main_verb > object_index) {
+            return false;
+        }
+    }else if (std::find_if(tokens.begin(), tokens.end(), [](const TokenType& token){ return token == TokenType::Article; }) != tokens.end()) {
+        int article_index = findIndex(tokens, TokenType::Article);
+        int object_index = findIndex(tokens, TokenType::Noun);
+        if (article_index >= object_index) {
+            return false;
+        }
+    }else if (std::find_if(tokens.begin(), tokens.end(), [](const TokenType& token){ return token == TokenType::Preposition; }) != tokens.end()) {
+        int main_verb_index = findIndex(tokens, TokenType::Verb);
+        std::vector<int> propistion_indeces;
+        for(int i = 0; i < tokens.size(); i++){
+            if(tokens[i] == TokenType::Preposition){
+                propistion_indeces.push_back(i);
+            }
+        }
+        for(int propistion_indece : propistion_indeces){
+            if(main_verb_index > propistion_indece){
+                return false;
+            }
+        }
+    }else if (std::find_if(tokens.begin(), tokens.end(), [](const TokenType& token){ return token == TokenType::AuxiliaryVerb; }) != tokens.end()) {
+        int main_verb = findIndex(tokens, TokenType::Verb);
+        int aux_verb_index = findIndex(tokens, TokenType::AuxiliaryVerb);
+        if (aux_verb_index >= main_verb) {
+            return false;
+        }
+    }
 
+    return true;
+}
 
 
 
 
 //create a struct called Token with the following fields: type, value
-struct Token {
-    TokenType type;
-    std::string lexeme;
-};
-
-//create a function called lex that takes a string and returns a vector of Tokens
-std::vector<Token> lex(const std::string &input) {
-    std::vector<Token> tokens;
-    std::string word;
-    for (char c : input) {
-        if (c == ' ') {
-            if (word == "the" || word == "a" || word == "an" || word == "The" || word == "A" || word == "An") {
-                tokens.push_back({TokenType::Article, word});
-            } else if (word == "cat" || word == "dog") {
-                tokens.push_back({TokenType::Subject, word});
-            } else if (word == "ran" || word == "ate") {
-                tokens.push_back({TokenType::Verb, word});
-            } else if (word == "on" || word == "under") {
-                tokens.push_back({TokenType::Preposition, word});
-            } else if (word == "mat" || word == "dog") {
-                tokens.push_back({TokenType::Object, word});
-            }
-            word = "";
-        } else {
-            word += c;
-        }
-    }
-    return tokens;
-}
+//struct Token {
+//    TokenType type;
+//    std::string lexeme;
+//};
+//
+////create a function called lex that takes a string and returns a vector of Tokens
+//std::vector<Token> lex(const std::string &input) {
+//    std::vector<Token> tokens;
+//    std::string word;
+//    for (char c : input) {
+//        if (c == ' ') {
+//            if (word == "the" || word == "a" || word == "an" || word == "The" || word == "A" || word == "An") {
+//                tokens.push_back({TokenType::Article, word});
+//            } else if (word == "cat" || word == "dog") {
+//                tokens.push_back({TokenType::Subject, word});
+//            } else if (word == "ran" || word == "ate") {
+//                tokens.push_back({TokenType::Verb, word});
+//            } else if (word == "on" || word == "under") {
+//                tokens.push_back({TokenType::Preposition, word});
+//            } else if (word == "mat" || word == "dog") {
+//                tokens.push_back({TokenType::Object, word});
+//            }
+//            word = "";
+//        } else {
+//            word += c;
+//        }
+//    }
+//    return tokens;
+//}
 
 //create a function called parse that takes a vector of Tokens and returns a boolean
-bool parse(const std::vector<Token> &tokens) {
-    if (tokens.size() != 5) {
-        return false;
-    }
-    if (tokens[0].type != TokenType::Article) {
-        return false;
-    }
-    if (tokens[1].type != TokenType::Subject) {
-        return false;
-    }
-    if (tokens[2].type != TokenType::Verb) {
-        return false;
-    }
-    if (tokens[3].type != TokenType::Preposition) {
-        return false;
-    }
-    if (tokens[4].type != TokenType::Object) {
-        return false;
-    }
-    return true;
-}
-
-//create a function called print that takes a vector of Tokens and returns nothing
-void print(const std::vector<Token> &tokens) {
-    for (const Token &token : tokens) {
-        std::cout << token.lexeme << " ";
-    }
-    std::cout << std::endl;
-}
+//bool parse(const std::vector<Token> &tokens) {
+//    if (tokens.size() != 5) {
+//        return false;
+//    }
+//    if (tokens[0].type != TokenType::Article) {
+//        return false;
+//    }
+//    if (tokens[1].type != TokenType::Subject) {
+//        return false;
+//    }
+//    if (tokens[2].type != TokenType::Verb) {
+//        return false;
+//    }
+//    if (tokens[3].type != TokenType::Preposition) {
+//        return false;
+//    }
+//    if (tokens[4].type != TokenType::Object) {
+//        return false;
+//    }
+//    return true;
+//}
+//
+////create a function called print that takes a vector of Tokens and returns nothing
+//void print(const std::vector<Token> &tokens) {
+//    for (const Token &token : tokens) {
+//        std::cout << token.lexeme << " ";
+//    }
+//    std::cout << std::endl;
+//}
 
 //create a function called main that takes no arguments and returns an int
 
 int main() {
     // Create a Tokenizer
-//    Tokenizer tokenizer;
-//    tokenizer.loadMappingsFromFile("mappings.txt");
-//    tokenizer.tokenize("the cat ran on the mat");
-//    tokenizer.tokenize("the cat is going to school ");
-//    is_valid_sentence(tokenizer, "the cat is going to school");
+    Tokenizer tokenizer;
+    tokenizer.loadMappingsFromFile("mappings.txt");
+    std::cout<<is_valid_sentence(tokenizer, "the cat is going to store")<<std::endl;
     return 0;
 }
