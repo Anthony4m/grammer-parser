@@ -102,19 +102,19 @@ bool is_valid_sentence(const Tokenizer& tokenizer, const std::string& sentence) 
     auto tokens = tokenizer.tokenize(sentence);
     if (std::find_if(tokens.begin(), tokens.end(), [](const TokenType& token){ return token == TokenType::Noun; }) == tokens.end() ) {
         return false;
-    }else if (std::find_if(tokens.begin(), tokens.end(), [](const TokenType& token){ return token == TokenType::Noun; }) != tokens.end()) {
+    }if (std::find_if(tokens.begin(), tokens.end(), [](const TokenType& token){ return token == TokenType::Noun; }) != tokens.end()) {
         int main_verb = findIndex(tokens, TokenType::Verb);
         int object_index = findIndex(tokens, TokenType::Noun);
         if (main_verb > object_index) {
             return false;
         }
-    }else if (std::find_if(tokens.begin(), tokens.end(), [](const TokenType& token){ return token == TokenType::Article; }) != tokens.end()) {
+    }if (std::find_if(tokens.begin(), tokens.end(), [](const TokenType& token){ return token == TokenType::Article; }) != tokens.end()) {
         int article_index = findIndex(tokens, TokenType::Article);
         int object_index = findIndex(tokens, TokenType::Noun);
         if (article_index >= object_index) {
             return false;
         }
-    }else if (std::find_if(tokens.begin(), tokens.end(), [](const TokenType& token){ return token == TokenType::Preposition; }) != tokens.end()) {
+    }if (std::find_if(tokens.begin(), tokens.end(), [](const TokenType& token){ return token == TokenType::Preposition; }) != tokens.end()) {
         int main_verb_index = findIndex(tokens, TokenType::Verb);
         std::vector<int> propistion_indeces;
         for(int i = 0; i < tokens.size(); i++){
@@ -127,7 +127,7 @@ bool is_valid_sentence(const Tokenizer& tokenizer, const std::string& sentence) 
                 return false;
             }
         }
-    }else if (std::find_if(tokens.begin(), tokens.end(), [](const TokenType& token){ return token == TokenType::AuxiliaryVerb; }) != tokens.end()) {
+    }if (std::find_if(tokens.begin(), tokens.end(), [](const TokenType& token){ return token == TokenType::AuxiliaryVerb; }) != tokens.end()) {
         int main_verb = findIndex(tokens, TokenType::Verb);
         int aux_verb_index = findIndex(tokens, TokenType::AuxiliaryVerb);
         if (aux_verb_index >= main_verb) {
@@ -209,6 +209,9 @@ int main() {
     // Create a Tokenizer
     Tokenizer tokenizer;
     tokenizer.loadMappingsFromFile("mappings.txt");
-    std::cout<<is_valid_sentence(tokenizer, "the cat")<<std::endl;
+    std::string input;
+    std::cout<<"Enter a sentence"<<std::endl;
+    std::getline(std::cin,input);
+    std::cout<<is_valid_sentence(tokenizer, input)<<std::endl;
     return 0;
 }
