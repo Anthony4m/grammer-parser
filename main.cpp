@@ -100,8 +100,7 @@ public:
 
 bool is_valid_sentence(const Tokenizer& tokenizer, const std::string& sentence) {
     auto tokens = tokenizer.tokenize(sentence);
-    if (std::find_if(tokens.begin(), tokens.end(), [](const TokenType& token){ return token == TokenType::Noun; }) == tokens.end() ||
-        std::find_if(tokens.begin(), tokens.end(), [](const TokenType& token){ return token == TokenType::Verb; }) == tokens.end()) {
+    if (std::find_if(tokens.begin(), tokens.end(), [](const TokenType& token){ return token == TokenType::Noun; }) == tokens.end() ) {
         return false;
     }else if (std::find_if(tokens.begin(), tokens.end(), [](const TokenType& token){ return token == TokenType::Noun; }) != tokens.end()) {
         int main_verb = findIndex(tokens, TokenType::Verb);
@@ -210,6 +209,6 @@ int main() {
     // Create a Tokenizer
     Tokenizer tokenizer;
     tokenizer.loadMappingsFromFile("mappings.txt");
-    std::cout<<is_valid_sentence(tokenizer, "the cat is going to store")<<std::endl;
+    std::cout<<is_valid_sentence(tokenizer, "the cat")<<std::endl;
     return 0;
 }
